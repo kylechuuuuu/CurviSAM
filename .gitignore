@@ -1,0 +1,24 @@
+# weights / checkpoints
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+checkpoints/*
+!checkpoints/README.md
+
+# data and caches
+datasets/
+cache/
+logs/
+results/
+
+# python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# outputs
+*.png
+*.jpg
+*.csv
+*.json
