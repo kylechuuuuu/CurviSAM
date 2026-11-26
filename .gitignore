@@ -1,0 +1,14 @@
+*.pth
+*.pt
+*.zip
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+datasets/
+data/
+logs/
+runs/
+results/
+work/
+cache/
+.DS_Store
