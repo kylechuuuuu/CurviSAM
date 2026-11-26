@@ -31,7 +31,7 @@ Dice at threshold 0.5, no test-time adaptation. Total trainable parameters: 17.2
 
 ```
 2D/    frozen ViT-L + dual-level adapters + attribute decoder + rank calibration
-3D/    the same design applied slice-wise, with a 3D mask decoder
+3D/    native 3D: SAM-Med3D ViT + 3D dual-level adapters + Conv3d attribute decoder
 ```
 
 ## 4. Quick start (2D)
@@ -66,13 +66,17 @@ python rank_v2.py --ckpt work/swa.pth --use_sdf 1 --adapter_dim_ratio 0.1 \
 
 ## 5. 3D
 
-`3D/` applies the same frozen-encoder + dual-level adapter design slice by slice,
-with `segment_anything/modeling/mask_decoder_3d.py` replacing the 2D decoder.
+`3D/` is native 3D: the frozen SAM-Med3D 3D ViT with 3D dual-level adapters and a
+Conv3d attribute decoder. Clone SAM-Med3D into `3D/third_party/` first.
 
 ```bash
 cd 3D
-python train_sam_3d.py          # training (paths configured at the top of the file)
-python infer_3d_3ddec.py --cases <case> --output_dir <dir>
+python scripts/prepare_data.py --raw-dir data/TOF-MRA --out-dir data/tof_mra_08mm --spacing 0.8
+python scripts/train_fewshot.py --data-dir data/tof_mra_08mm \
+  --ckpt ckpt/sam_med3d_turbo.pth --k 10 --n-test 10 \
+  --decoder conv3d_attr --conv-stem 1 --variant dla \
+  --epochs 40 --lr 1e-3 --adapter-lr 3e-4 --run-name tof08_attr
+python scripts/rank_calib_3d.py --run-dir runs/tof08_attr --budgets 1.0,0.6,0.4
 ```
 
 ## 6. Data layout
