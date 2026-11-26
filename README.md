@@ -4,17 +4,17 @@ Prompt-free curvilinear-structure segmentation with a frozen SAM, in 2D and 3D.
 
 ## 1. Final 2D architecture
 
-| Component | Choice | Evidence |
-|---|---|---|
-| Backbone | frozen SAM ViT-L | unchanged throughout |
-| Dual-level adapter | 24 internal (MLP residual) + 24 external (block boundary), r=0.1, d=102 | removing Adapter-I −8.96, removing Adapter-E −10.09 |
-| up_proj init | zero | training starts exactly at the pretrained SAM |
-| Attribute decoder | centerline + radius + boundary SDF at 512, explicit tube rendering, zero-init residuals | no SDF 0.7173/0.5106; with SDF 0.7295/0.5398 (ROAD +2.9) |
-| Precision term | Tversky, `w_prec=0.5, α=0.8, β=0.2` | without 0.6340–0.6549; with 0.7105–0.7295 (DSCA +6–8) |
-| SWA | average of the last 5 validation snapshots | best 0.7105 → SWA 0.7295 (+1.9) |
-| Adaptive rank (deployment) | 18-image contribution spectrum → SVD output-subspace rank r≈0.40, **no layer deletion** | 0.7295/0.5398 → 0.7284/0.5382 (−0.11/−0.16, adapter params −28%) |
-| Training-time adaptive scaling | not used | collapses (cross-image std 0.012), DSCA −9.0 |
-| Layer deletion | not used | −1.0 to −2.4 on the final model, unstable across models |
+| Component | Choice |
+|---|---|
+| Backbone | frozen SAM ViT-L |
+| Dual-level adapter | 24 internal (MLP residual) + 24 external (block boundary), r=0.1, d=102 |
+| up_proj init | zero |
+| Attribute decoder | centerline + radius + boundary SDF at 512, explicit tube rendering, zero-init residuals |
+| Precision term | Tversky, `w_prec=0.5, α=0.8, β=0.2` |
+| SWA | average of the last 5 validation snapshots |
+| Adaptive rank (deployment) | 18-image contribution spectrum → SVD output-subspace rank r≈0.40, **no layer deletion** |
+| Training-time adaptive scaling | not used |
+| Layer deletion | not used |
 
 ## 2. Final 2D results (1 seed, 18 training images)
 
